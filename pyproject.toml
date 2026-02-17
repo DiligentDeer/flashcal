@@ -1,0 +1,13 @@
+[project]
+name = "flashcal"
+version = "0.1.0"
+description = "Reactive marimo notebook for DeFi leverage, shock, and incentive formulas"
+requires-python = ">=3.11"
+dependencies = [
+    "marimo>=0.10",
+    "plotly>=5.0",
+    "numpy>=1.24",
+]
+
+[dependency-groups]
+dev = ["pytest>=7.0"]
