@@ -521,11 +521,11 @@ def tab3_inputs(mo):
         debounce=True, label="Rate (annualized %)",
     )
     tvl_input_tab3 = mo.ui.number(
-        start=0.0, stop=10_000_000_000.0, step=1_000_000.0, value=50_000_000.0,
+        start=0.0, stop=10_000_000_000.0, step=100.0, value=50_000_000.0,
         debounce=True, label="Target TVL ($)",
     )
     budget_input_tab3 = mo.ui.number(
-        start=0.0, stop=100_000_000.0, step=10_000.0, value=100_000.0,
+        start=0.0, stop=100_000_000.0, step=100.0, value=100_000.0,
         debounce=True, label="Budget ($)",
     )
     duration_input_tab3 = mo.ui.number(
@@ -534,19 +534,19 @@ def tab3_inputs(mo):
     )
     # Heatmap axis range inputs
     budget_min_input = mo.ui.number(
-        start=0.0, stop=100_000_000.0, step=10_000.0, value=10_000.0,
+        start=0.0, stop=100_000_000.0, step=100.0, value=10_000.0,
         debounce=True, label="Budget Min ($)",
     )
     budget_max_input = mo.ui.number(
-        start=0.0, stop=100_000_000.0, step=10_000.0, value=1_000_000.0,
+        start=0.0, stop=100_000_000.0, step=100.0, value=1_000_000.0,
         debounce=True, label="Budget Max ($)",
     )
     tvl_min_input = mo.ui.number(
-        start=0.0, stop=10_000_000_000.0, step=1_000_000.0, value=1_000_000.0,
+        start=0.0, stop=10_000_000_000.0, step=100.0, value=1_000_000.0,
         debounce=True, label="TVL Min ($)",
     )
     tvl_max_input = mo.ui.number(
-        start=0.0, stop=10_000_000_000.0, step=1_000_000.0, value=200_000_000.0,
+        start=0.0, stop=10_000_000_000.0, step=100.0, value=200_000_000.0,
         debounce=True, label="TVL Max ($)",
     )
     return (
@@ -1325,11 +1325,11 @@ def tab7_assembly(
 @app.cell
 def tab8_inputs(mo):
     camp_init_cap = mo.ui.number(
-        start=0.0, stop=10_000_000_000.0, step=10_000_000.0, value=100_000_000.0,
+        start=0.0, stop=10_000_000_000.0, step=100.0, value=100_000_000.0,
         debounce=True, label="Initial Capacity ($)",
     )
     camp_final_cap = mo.ui.number(
-        start=0.0, stop=10_000_000_000.0, step=10_000_000.0, value=200_000_000.0,
+        start=0.0, stop=10_000_000_000.0, step=100.0, value=200_000_000.0,
         debounce=True, label="Final Capacity ($)",
     )
     camp_duration = mo.ui.number(
@@ -1342,7 +1342,7 @@ def tab8_inputs(mo):
     )
     camp_c1 = mo.ui.dictionary({
         "name": mo.ui.text(value="Campaign 1", label="Name"),
-        "budget": mo.ui.number(start=0.0, stop=100_000_000.0, step=10_000.0, value=100_000.0, debounce=True, label="Budget ($)"),
+        "budget": mo.ui.number(start=0.0, stop=100_000_000.0, step=100.0, value=100_000.0, debounce=True, label="Budget ($)"),
         "type": mo.ui.dropdown(
             options={"Variable Rate": "variable", "Fixed Rate": "fixed", "Capped Rate": "capped"},
             value="Variable Rate", label="Type",
@@ -1351,7 +1351,7 @@ def tab8_inputs(mo):
     })
     camp_c2 = mo.ui.dictionary({
         "name": mo.ui.text(value="", label="Name"),
-        "budget": mo.ui.number(start=0.0, stop=100_000_000.0, step=10_000.0, value=0.0, debounce=True, label="Budget ($)"),
+        "budget": mo.ui.number(start=0.0, stop=100_000_000.0, step=100.0, value=0.0, debounce=True, label="Budget ($)"),
         "type": mo.ui.dropdown(
             options={"Variable Rate": "variable", "Fixed Rate": "fixed", "Capped Rate": "capped"},
             value="Variable Rate", label="Type",
@@ -1360,7 +1360,7 @@ def tab8_inputs(mo):
     })
     camp_c3 = mo.ui.dictionary({
         "name": mo.ui.text(value="", label="Name"),
-        "budget": mo.ui.number(start=0.0, stop=100_000_000.0, step=10_000.0, value=0.0, debounce=True, label="Budget ($)"),
+        "budget": mo.ui.number(start=0.0, stop=100_000_000.0, step=100.0, value=0.0, debounce=True, label="Budget ($)"),
         "type": mo.ui.dropdown(
             options={"Variable Rate": "variable", "Fixed Rate": "fixed", "Capped Rate": "capped"},
             value="Variable Rate", label="Type",
