@@ -306,21 +306,25 @@ def tab1_heatmap_input(mo):
         start=0.5, stop=100.0, step=0.5, value=15.0,
         debounce=True, label="Max Borrow Rate (%)",
     )
-    lltv_heatmap_input = mo.ui.number(
+    ltv_highlight_input = mo.ui.number(
         start=0.0, stop=100.0, step=0.5, value=86.0,
-        debounce=True, label="LLTV to Highlight (%)",
+        debounce=True, label="LTV to Highlight (%)",
     )
-    return (lltv_heatmap_input, max_borrow_rate_input, max_supply_rate_input, target_yield_input,)
+    ltv_tolerance_input = mo.ui.number(
+        start=0.0, stop=20.0, step=0.1, value=1.5,
+        debounce=True, label="Tolerance ± (%)",
+    )
+    return (ltv_highlight_input, ltv_tolerance_input, max_borrow_rate_input, max_supply_rate_input, target_yield_input,)
 
 
 # --- Cell 5: Tab 1 heatmap ---
 @app.cell
-def tab1_heatmap(apply_style, go, lltv_heatmap_input, max_borrow_rate_input, max_supply_rate_input, np, px, target_yield_input):
+def tab1_heatmap(apply_style, go, ltv_highlight_input, ltv_tolerance_input, max_borrow_rate_input, max_supply_rate_input, np, px, target_yield_input):
     _target = target_yield_input.value
     _max_sr = max_supply_rate_input.value
     _max_br = max_borrow_rate_input.value
-    _lltv_pct = lltv_heatmap_input.value
-    _lltv = _lltv_pct / 100.0
+    _ltv_hl_pct = ltv_highlight_input.value
+    _tol = ltv_tolerance_input.value
     _borrow_rates = np.linspace(0.0, _max_br, 61)
     _supply_rates = np.linspace(0.0, _max_sr, 61)
     _br_grid, _sr_grid = np.meshgrid(_borrow_rates, _supply_rates)
@@ -350,9 +354,9 @@ def tab1_heatmap(apply_style, go, lltv_heatmap_input, max_borrow_rate_input, max
         title=f"LTV Required for {_target:.1f}% Leveraged Yield",
     )
 
-    # Highlight cells where LTV ≈ LLTV (within ±1.5%)
+    # Highlight cells where LTV is within ±tolerance of the target LTV
     _highlight = np.where(
-        np.abs(_ltv_grid_pct - _lltv_pct) <= 1.5,
+        np.abs(_ltv_grid_pct - _ltv_hl_pct) <= _tol,
         _ltv_grid_pct,
         np.nan,
     )
@@ -362,8 +366,8 @@ def tab1_heatmap(apply_style, go, lltv_heatmap_input, max_borrow_rate_input, max
         y=np.round(_supply_rates, 2),
         colorscale=[[0, "rgba(255,0,0,0.7)"], [1, "rgba(255,0,0,0.7)"]],
         showscale=False,
-        name=f"LLTV = {_lltv_pct:.1f}%",
-        hovertemplate="Borrow: %{x:.1f}%<br>Supply: %{y:.1f}%<br>LTV: %{z:.1f}%<extra>LLTV zone</extra>",
+        name=f"LTV = {_ltv_hl_pct:.1f}%",
+        hovertemplate="Borrow: %{x:.1f}%<br>Supply: %{y:.1f}%<br>LTV: %{z:.1f}%<extra>Highlighted LTV</extra>",
     ))
 
     heatmap_fig_tab1 = apply_style(_fig, height=520)
@@ -376,8 +380,9 @@ def tab1_assembly(
     heatmap_fig_tab1,
     leverage_result,
     leveraged_yield_result,
-    lltv_heatmap_input,
+    ltv_highlight_input,
     ltv_input,
+    ltv_tolerance_input,
     max_borrow_rate_input,
     max_supply_rate_input,
     mo,
@@ -408,7 +413,7 @@ def tab1_assembly(
         mo.md("### Heatmap: LTV Required for Target Yield"),
         mo.md("Given a target leveraged yield, what LTV is needed for each (supply, borrow) pair?"),
         mo.hstack(
-            [target_yield_input, max_supply_rate_input, max_borrow_rate_input, lltv_heatmap_input],
+            [target_yield_input, max_supply_rate_input, max_borrow_rate_input, ltv_highlight_input, ltv_tolerance_input],
             justify="start",
             gap=1.5,
         ),
