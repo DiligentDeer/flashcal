@@ -298,15 +298,25 @@ def tab1_heatmap_input(mo):
         start=-50.0, stop=100.0, step=0.5, value=10.0,
         debounce=True, label="Target Leveraged Yield (%)",
     )
-    return (target_yield_input,)
+    max_supply_rate_input = mo.ui.number(
+        start=0.5, stop=100.0, step=0.5, value=15.0,
+        debounce=True, label="Max Supply Rate (%)",
+    )
+    max_borrow_rate_input = mo.ui.number(
+        start=0.5, stop=100.0, step=0.5, value=15.0,
+        debounce=True, label="Max Borrow Rate (%)",
+    )
+    return (max_borrow_rate_input, max_supply_rate_input, target_yield_input,)
 
 
 # --- Cell 5: Tab 1 heatmap ---
 @app.cell
-def tab1_heatmap(apply_style, np, px, target_yield_input):
+def tab1_heatmap(apply_style, max_borrow_rate_input, max_supply_rate_input, np, px, target_yield_input):
     _target = target_yield_input.value
-    _borrow_rates = np.linspace(0.0, 15.0, 61)
-    _supply_rates = np.linspace(0.0, 15.0, 61)
+    _max_sr = max_supply_rate_input.value
+    _max_br = max_borrow_rate_input.value
+    _borrow_rates = np.linspace(0.0, _max_br, 61)
+    _supply_rates = np.linspace(0.0, _max_sr, 61)
     _br_grid, _sr_grid = np.meshgrid(_borrow_rates, _supply_rates)
 
     # LTV = (TargetYield - SupplyRate) / (TargetYield - BorrowRate)
@@ -344,6 +354,8 @@ def tab1_assembly(
     leverage_result,
     leveraged_yield_result,
     ltv_input,
+    max_borrow_rate_input,
+    max_supply_rate_input,
     mo,
     supply_rate_input,
     borrow_rate_input,
@@ -371,7 +383,11 @@ def tab1_assembly(
         mo.md("---"),
         mo.md("### Heatmap: LTV Required for Target Yield"),
         mo.md("Given a target leveraged yield, what LTV is needed for each (supply, borrow) pair?"),
-        target_yield_input,
+        mo.hstack(
+            [target_yield_input, max_supply_rate_input, max_borrow_rate_input],
+            justify="start",
+            gap=1.5,
+        ),
         mo.as_html(heatmap_fig_tab1),
     ])
     return (tab1_content,)
