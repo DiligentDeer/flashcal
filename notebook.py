@@ -383,16 +383,16 @@ def tab1_heatmap(apply_style, go, highlight_borrow_rate_input, highlight_supply_
     _hl_sr = highlight_supply_rate_input.value
     _hl_br = highlight_borrow_rate_input.value
     _fig.add_hline(
-        y=_hl_sr, line=dict(color="cyan", width=1.5, dash="dot"),
+        y=_hl_sr, line=dict(color="black", width=1),
         annotation_text=f"Supply {_hl_sr:.2f}%",
         annotation_position="top left",
-        annotation_font_color="cyan",
+        annotation_font_color="black",
     )
     _fig.add_vline(
-        x=_hl_br, line=dict(color="orange", width=1.5, dash="dot"),
+        x=_hl_br, line=dict(color="black", width=1),
         annotation_text=f"Borrow {_hl_br:.2f}%",
         annotation_position="top right",
-        annotation_font_color="orange",
+        annotation_font_color="black",
     )
 
     heatmap_fig_tab1 = apply_style(_fig, height=520)
