@@ -366,6 +366,7 @@ def tab1_heatmap(apply_style, go, ltv_highlight_input, ltv_tolerance_input, max_
         y=np.round(_supply_rates, 2),
         colorscale=[[0, "rgba(255,0,0,0.7)"], [1, "rgba(255,0,0,0.7)"]],
         showscale=False,
+        hoverongaps=False,
         name=f"LTV = {_ltv_hl_pct:.1f}%",
         hovertemplate="Borrow: %{x:.1f}%<br>Supply: %{y:.1f}%<br>LTV: %{z:.1f}%<extra>Highlighted LTV</extra>",
     ))
