@@ -350,17 +350,20 @@ def tab1_heatmap(apply_style, go, lltv_heatmap_input, max_borrow_rate_input, max
         title=f"LTV Required for {_target:.1f}% Leveraged Yield",
     )
 
-    # Overlay LLTV contour line: SupplyRate = Target - LLTV * (Target - BorrowRate)
-    _sr_at_lltv = _target - _lltv * (_target - _borrow_rates)
-    # Clip to visible axis range
-    _mask = (_sr_at_lltv >= 0) & (_sr_at_lltv <= _max_sr)
-    _fig.add_trace(go.Scatter(
-        x=_borrow_rates[_mask],
-        y=_sr_at_lltv[_mask],
-        mode="lines",
-        line=dict(color="red", width=2.5, dash="dash"),
+    # Highlight cells where LTV ≈ LLTV (within ±1.5%)
+    _highlight = np.where(
+        np.abs(_ltv_grid_pct - _lltv_pct) <= 1.5,
+        _ltv_grid_pct,
+        np.nan,
+    )
+    _fig.add_trace(go.Heatmap(
+        z=_highlight,
+        x=np.round(_borrow_rates, 2),
+        y=np.round(_supply_rates, 2),
+        colorscale=[[0, "rgba(255,0,0,0.7)"], [1, "rgba(255,0,0,0.7)"]],
+        showscale=False,
         name=f"LLTV = {_lltv_pct:.1f}%",
-        hovertemplate="Borrow: %{x:.1f}%<br>Supply: %{y:.1f}%<extra></extra>",
+        hovertemplate="Borrow: %{x:.1f}%<br>Supply: %{y:.1f}%<br>LTV: %{z:.1f}%<extra>LLTV zone</extra>",
     ))
 
     heatmap_fig_tab1 = apply_style(_fig, height=520)
