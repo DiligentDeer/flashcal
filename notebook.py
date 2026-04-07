@@ -314,12 +314,20 @@ def tab1_heatmap_input(mo):
         start=0.0, stop=20.0, step=0.1, value=1.5,
         debounce=True, label="Tolerance ± (%)",
     )
-    return (ltv_highlight_input, ltv_tolerance_input, max_borrow_rate_input, max_supply_rate_input, target_yield_input,)
+    highlight_supply_rate_input = mo.ui.number(
+        start=0.0, stop=100.0, step=0.01, value=3.0,
+        debounce=True, label="Highlight Supply Rate (%)",
+    )
+    highlight_borrow_rate_input = mo.ui.number(
+        start=0.0, stop=100.0, step=0.01, value=5.0,
+        debounce=True, label="Highlight Borrow Rate (%)",
+    )
+    return (highlight_borrow_rate_input, highlight_supply_rate_input, ltv_highlight_input, ltv_tolerance_input, max_borrow_rate_input, max_supply_rate_input, target_yield_input,)
 
 
 # --- Cell 5: Tab 1 heatmap ---
 @app.cell
-def tab1_heatmap(apply_style, go, ltv_highlight_input, ltv_tolerance_input, max_borrow_rate_input, max_supply_rate_input, np, px, target_yield_input):
+def tab1_heatmap(apply_style, go, highlight_borrow_rate_input, highlight_supply_rate_input, ltv_highlight_input, ltv_tolerance_input, max_borrow_rate_input, max_supply_rate_input, np, px, target_yield_input):
     _target = target_yield_input.value
     _max_sr = max_supply_rate_input.value
     _max_br = max_borrow_rate_input.value
@@ -371,6 +379,22 @@ def tab1_heatmap(apply_style, go, ltv_highlight_input, ltv_tolerance_input, max_
         hovertemplate="Borrow: %{x:.1f}%<br>Supply: %{y:.1f}%<br>LTV: %{z:.1f}%<extra>Highlighted LTV</extra>",
     ))
 
+    # Reference lines for specific supply / borrow rates
+    _hl_sr = highlight_supply_rate_input.value
+    _hl_br = highlight_borrow_rate_input.value
+    _fig.add_hline(
+        y=_hl_sr, line=dict(color="cyan", width=1.5, dash="dot"),
+        annotation_text=f"Supply {_hl_sr:.2f}%",
+        annotation_position="top left",
+        annotation_font_color="cyan",
+    )
+    _fig.add_vline(
+        x=_hl_br, line=dict(color="orange", width=1.5, dash="dot"),
+        annotation_text=f"Borrow {_hl_br:.2f}%",
+        annotation_position="top right",
+        annotation_font_color="orange",
+    )
+
     heatmap_fig_tab1 = apply_style(_fig, height=520)
     return (heatmap_fig_tab1,)
 
@@ -379,6 +403,8 @@ def tab1_heatmap(apply_style, go, ltv_highlight_input, ltv_tolerance_input, max_
 @app.cell
 def tab1_assembly(
     heatmap_fig_tab1,
+    highlight_borrow_rate_input,
+    highlight_supply_rate_input,
     leverage_result,
     leveraged_yield_result,
     ltv_highlight_input,
@@ -414,7 +440,12 @@ def tab1_assembly(
         mo.md("### Heatmap: LTV Required for Target Yield"),
         mo.md("Given a target leveraged yield, what LTV is needed for each (supply, borrow) pair?"),
         mo.hstack(
-            [target_yield_input, max_supply_rate_input, max_borrow_rate_input, ltv_highlight_input, ltv_tolerance_input],
+            [max_supply_rate_input, highlight_supply_rate_input, max_borrow_rate_input, highlight_borrow_rate_input],
+            justify="start",
+            gap=1.5,
+        ),
+        mo.hstack(
+            [target_yield_input, ltv_highlight_input, ltv_tolerance_input],
             justify="start",
             gap=1.5,
         ),
